@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { CirclePlus, Pencil, Trash2, Search, ImageUp } from "lucide-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Product() {
   // last
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]); // Data produk
-  console.log("products", products);
   const [formData, setFormData] = useState({
     product_name: "",
     category: "",
@@ -16,6 +16,18 @@ export default function Product() {
     size: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const navigate = useNavigate();
+  console.log("products", products);
+
+  //cek token
+  useEffect(() => {
+    // console.log("localStorage ", localStorage.getItem("token"));
+    if (localStorage.getItem("token") === null) {
+      alert("silahkan login dulu");
+      navigate("/");
+    }
+  }, []);
 
   // Fetch produk dari API
   useEffect(() => {
@@ -293,6 +305,7 @@ export default function Product() {
                       onChange={handleEditInputChange}
                       className="w-1/2 rounded-lg py-3 pl-4 text-xs border border-gray-500 text-gray-500"
                       placeholder="Qty"
+                      min="1"
                     />
                   </div>
 
@@ -553,6 +566,7 @@ export default function Product() {
                       onChange={handleInputChange}
                       className="w-1/2 rounded-lg py-3 pl-4 text-xs border border-gray-500 text-gray-500"
                       placeholder="Qty"
+                      min="1"
                       required
                     />
                   </div>

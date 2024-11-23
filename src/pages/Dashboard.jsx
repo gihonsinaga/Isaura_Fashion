@@ -8,8 +8,23 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { TrendingUp, Users, ShoppingBag, MapPin } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Dashboard() {
+  const { isLoading, isAuthenticated } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // useAuth hook will handle redirect
+  }
+
   // Sample data for revenue chart
   const revenueData = [
     { month: "Jan", current: 80, previous: 65 },

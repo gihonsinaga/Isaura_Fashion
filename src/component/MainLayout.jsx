@@ -1,21 +1,29 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
   FileText,
   UserCircle,
   LogOut,
+  UserRound,
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { name: "Product", icon: Package, path: "/product" },
   { name: "Report", icon: FileText, path: "/report" },
   { name: "My Profile", icon: UserCircle, path: "/profile" },
 ];
 
 const MainLayout = ({ children }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Hapus token dari localStorage
+    navigate("/"); // Arahkan ke halaman login
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -54,12 +62,10 @@ const MainLayout = ({ children }) => {
         {/* Logout */}
         <div className="absolute bottom-4 w-full px-4">
           <button
-            onClick={() => {
-              /* Add logout handler */
-            }}
+            onClick={handleLogout}
             className="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut />
             Logout
           </button>
         </div>
@@ -70,12 +76,13 @@ const MainLayout = ({ children }) => {
         {/* Header */}
         <div className="flex justify-end items-center mb-8">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">ISAURA ADMIN</span>
-            <img
+            <span className="text-base font-medium">ISAURA ADMIN</span>
+            {/* <img
               src="/api/placeholder/32/32"
               alt=""
               className="w-8 h-8 rounded-full"
-            />
+            /> */}
+            <UserRound />
           </div>
         </div>
 
