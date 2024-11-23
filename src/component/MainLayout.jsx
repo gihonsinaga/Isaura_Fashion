@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -8,6 +8,7 @@ import {
   LogOut,
   UserRound,
 } from "lucide-react";
+import axios from "axios";
 
 const navigation = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -18,6 +19,35 @@ const navigation = [
 
 const MainLayout = ({ children }) => {
   const navigate = useNavigate();
+
+  const [profileData, setProfileData] = useState({});
+
+  // Fungsi untuk mengambil data profil
+  const fetchProfileData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      // console.log("tokenNav", token);
+      if (!token) {
+        navigate("/");
+      }
+
+      const response = await axios.get("http://localhost:5000/api/profiles", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setProfileData(response?.data);
+      // console.log("profileDataNav", profileData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Effect untuk mengambil data profil
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Hapus token dari localStorage
@@ -40,10 +70,10 @@ const MainLayout = ({ children }) => {
 
         {/* Navigation */}
         <nav className="p-4 space-y-1">
-          {navigation.map((item) => (
+          {navigation?.map((item) => (
             <NavLink
-              key={item.name}
-              to={item.path}
+              key={item?.name}
+              to={item?.path}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-4 rounded-lg text-sm font-medium transition-colors
                 ${
@@ -54,7 +84,7 @@ const MainLayout = ({ children }) => {
               }
             >
               <item.icon className="w-5 h-5" />
-              {item.name}
+              {item?.name}
             </NavLink>
           ))}
         </nav>
@@ -76,13 +106,17 @@ const MainLayout = ({ children }) => {
         {/* Header */}
         <div className="flex justify-end items-center mb-8">
           <div className="flex items-center gap-3">
-            <span className="text-base font-medium">ISAURA ADMIN</span>
+            <span className="text-base mt-1 font-medium  ">
+              {profileData?.username}
+            </span>
             {/* <img
               src="/api/placeholder/32/32"
               alt=""
               className="w-8 h-8 rounded-full"
             /> */}
-            <UserRound />
+            {/* <div className="font-medium text-gray-500 w-6 h-6">
+              <UserCircle />
+            </div> */}
           </div>
         </div>
 

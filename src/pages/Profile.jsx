@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { DismissibleAlert } from "../component/DismissibleAlert";
 
 export default function Profile() {
   // Pindahkan semua hooks ke bagian atas component
   const { isLoading: authLoading, isAuthenticated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState({
+    type: null, // 'success' atau 'error'
+    message: null,
+  });
   const [profileData, setProfileData] = useState({});
   const [editData, setEditData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -68,13 +72,17 @@ export default function Profile() {
       if (response.data) {
         setProfileData(editData);
         setIsEditing(false);
-        setNotification("Profile updated successfully!");
-        setTimeout(() => setNotification(""), 3000);
+        setNotification({
+          type: "success",
+          message: "Profile updated successfully!",
+        });
       }
     } catch (err) {
       console.error(err);
-      setNotification("Failed to update profile");
-      setTimeout(() => setNotification(""), 3000);
+      setNotification({
+        type: "error",
+        message: "Failed to update profile",
+      });
     }
   };
 
@@ -90,10 +98,13 @@ export default function Profile() {
   // Render component
   return (
     <div className="flex flex-col">
-      {notification && (
-        <div className="mb-6 p-4 bg-green-50 text-green-700 border border-green-200 rounded-lg">
-          {notification}
-        </div>
+      {/* Error and Success Alerts */}
+      {notification.message && (
+        <DismissibleAlert
+          variant={notification.type === "success" ? "success" : "destructive"}
+          message={notification.message}
+          onDismiss={() => setNotification({ type: null, message: null })}
+        />
       )}
 
       <div className="bg-white rounded-lg shadow-md p-8 w-[700px] mx-auto mt-10">

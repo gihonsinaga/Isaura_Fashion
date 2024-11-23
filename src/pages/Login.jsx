@@ -38,8 +38,15 @@ export default function Login() {
   };
   return (
     <div className="flex justify-center">
-      <div className="p-6 bg-white rounded-lg shadow-md w-[400px] mt-40">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+      <div className="p-8 bg-white rounded-lg shadow-md w-[400px] mt-40">
+        <div className="flex gap-x-2 justify-center">
+          <div>
+            <img src="../assets/Logo.png" className="w-9 h-8" alt="" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 ">Login</h2>
+          </div>
+        </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleLogin}>
           <div className="mb-4">
@@ -68,7 +75,7 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Login
           </button>

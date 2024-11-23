@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { CirclePlus, Pencil, Trash2, Search, ImageUp } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ProductTable from "../component/productTable.jsx";
+import { toast, Toaster } from "react-hot-toast";
+import { DismissibleAlert } from "../component/DismissibleAlert";
 
 export default function Product() {
   // last
@@ -16,6 +19,11 @@ export default function Product() {
     size: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
+
+  //alert close button
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [alerts, setAlerts] = useState([]);
 
   const navigate = useNavigate();
   console.log("products", products);
@@ -64,31 +72,31 @@ export default function Product() {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
 
-    // Validasi tipe dan ukuran file
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+  //   // Validasi tipe dan ukuran file
+  //   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+  //   const maxSize = 5 * 1024 * 1024; // 5MB
 
-    if (file) {
-      if (!allowedTypes.includes(file.type)) {
-        alert("Hanya file gambar yang diperbolehkan");
-        return;
-      }
+  //   if (file) {
+  //     if (!allowedTypes.includes(file.type)) {
+  //       alert("Hanya file gambar yang diperbolehkan");
+  //       return;
+  //     }
 
-      if (file.size > maxSize) {
-        alert("Ukuran file terlalu besar. Maksimal 5MB");
-        return;
-      }
+  //     if (file.size > maxSize) {
+  //       alert("Ukuran file terlalu besar. Maksimal 5MB");
+  //       return;
+  //     }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setSelectedImage(reader.result);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   // Submit data produk
   const handleSubmit = async (e) => {
@@ -106,7 +114,9 @@ export default function Product() {
       );
 
       if (response.status === 201) {
-        alert("Product added successfully!");
+        toast.success("Product added successfully!");
+        setSuccess("Product has been successfully added to inventory");
+
         setProducts((prev) => [...prev, response.data]); // Tambahkan produk baru ke daftar
         setFormData({
           product_name: "",
@@ -118,11 +128,13 @@ export default function Product() {
         setSelectedImage(null);
         setIsAddModalOpen(false); // Tutup modal
       } else {
-        alert("Failed to add product?.");
+        setError("Failed to add product. Please try again.");
+        toast.error("Failed to add product");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while adding the product?.");
+      setError("An error occurred while adding the product. Please try again.");
+      toast.error("Failed to add product");
     }
   };
 
@@ -174,9 +186,14 @@ export default function Product() {
           )
         );
         setIsEditModalOpen(false);
+        toast.success("Product updated successfully");
+        setSuccess("Product has been successfully updated");
+
         console.log("Product updated successfully");
       }
     } catch (error) {
+      toast.error("Error updating product");
+      setError("Failed to update product. Please try again.");
       console.error("Error updating product:", error);
     }
   };
@@ -191,29 +208,40 @@ export default function Product() {
 
       await axios.delete(`http://localhost:5000/api/products/${id}`);
       setProducts((prev) => prev.filter((product) => product?.id !== id));
+      toast.success("Product deleted successfully");
+      setSuccess("Product has been successfully deleted");
       console.log("Product deleted successfully");
     } catch (error) {
+      toast.error("Product Cannot Be Deleted");
+      setError(
+        "The product cannot be deleted, because the stock has already been sold!"
+      );
       console.error("Error deleting product:", error);
     }
   };
 
   return (
     <div className="p-6">
+      {/* Add the new alerts at the top of the component */}
+      {error && (
+        <DismissibleAlert
+          variant="destructive"
+          message={error}
+          onDismiss={() => setError(null)}
+        />
+      )}
+      {success && (
+        <DismissibleAlert
+          variant="success"
+          message={success}
+          onDismiss={() => setSuccess(null)}
+        />
+      )}
+
       {/* Header */}
-      <div className="flex justify-between items-center mb-6 text-sm">
+      <div className="flex justify-start items-center mb-6 text-sm">
         {/* <h1 className="text-2xl font-semibold">Product</h1> */}
 
-        {/* Search */}
-        <div className="relative mb-6">
-          <Search className="absolute left-4  top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search product name"
-            className="w-full pl-12 pr-4 pt-3.5 pb-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -269,15 +297,6 @@ export default function Product() {
                       <option value="Celana">Celana</option>
                       <option value="Dalaman">Dalaman</option>
                     </select>
-
-                    {/* <input
-                      type="text"
-                      name="category"
-                      placeholder="Category"
-                      value={editFormData?.category}
-                      onChange={handleEditInputChange}
-                      className="w-1/2 rounded-lg py-3 pl-4 text-xs border border-gray-500 text-gray-500"
-                    /> */}
                   </div>
 
                   <div className="flex justify-between">
@@ -385,12 +404,12 @@ export default function Product() {
 
       {/* Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
+        {/* <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Image
-              </th> */}
+              </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 ID Product
               </th>
@@ -417,7 +436,7 @@ export default function Product() {
           <tbody className="bg-white divide-y divide-gray-200 font-normal text-sm">
             {products?.map((product) => (
               <tr key={product?.id}>
-                {/* <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <img
                     src={product?.image || "null"} // Tambahkan gambar default jika tidak ada
                     alt={product?.product_name || "Product"}
@@ -427,7 +446,7 @@ export default function Product() {
                       e.target.src = "null"; // Gambar default jika gagal memuat
                     }}
                   />
-                </td> */}
+                </td>
 
                 <td className="px-6 py-6 whitespace-nowrap">
                   ISR - {product?.id}
@@ -474,10 +493,16 @@ export default function Product() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+
+        <ProductTable
+          products={products}
+          onEdit={handleEditClick}
+          onDelete={handleDelete}
+        />
 
         {/* Pagination */}
-        <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200">
+        {/* <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200">
           <div className="text-sm text-gray-500">Showing 1-10 of 70</div>
           <div className="flex gap-2">
             <button className="px-3 py-1 border rounded hover:bg-gray-50">
@@ -487,7 +512,7 @@ export default function Product() {
               &rarr;
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Add Stock Modal */}
@@ -642,6 +667,9 @@ export default function Product() {
           </div>
         </div>
       )}
+      <div className="text-sm">
+        <Toaster />
+      </div>
     </div>
   );
 }

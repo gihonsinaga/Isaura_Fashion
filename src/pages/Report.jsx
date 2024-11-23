@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import html2pdf from "html2pdf.js";
+import { toast, Toaster } from "react-hot-toast";
+import { DismissibleAlert } from "../component/DismissibleAlert";
 
 // Custom Alert Component
 const Alert = ({ children, variant = "default", className = "" }) => {
@@ -31,6 +34,7 @@ export default function Report() {
   const [reportData, setReportData] = useState([]);
   const [selectedMonthBase, setSelectedMonthBase] = useState(10);
   const [selectedYearBase, setSelectedYearBase] = useState(2024);
+  // console.log("reportData", reportData);
 
   // Form state for Add Report
   const [formData, setFormData] = useState({
@@ -85,10 +89,15 @@ export default function Report() {
 
       // Only update state if the response matches current selected month/year
       if (month === selectedMonthBase && year === selectedYearBase) {
+        toast.success("Report Get successfully");
+
         setReportData(response.data);
       }
     } catch (error) {
+      toast.error("Error fetching report data");
+
       setError("Error fetching report data: " + error.message);
+
       setReportData([]); // Reset report data on error
     } finally {
       setIsLoading(false);
@@ -106,6 +115,7 @@ export default function Report() {
         month: parseInt(formData.month),
         year: parseInt(formData.year),
       });
+      toast.success("Report added successfully");
 
       setSuccess("Report added successfully");
       setIsAddReportModalOpen(false);
@@ -129,6 +139,8 @@ export default function Report() {
       // Refresh products list to get updated stock
       await fetchProducts();
     } catch (error) {
+      toast.error("Error creating report");
+
       setError(error.response?.data?.error || "Error creating report");
     } finally {
       setIsLoading(false);
@@ -243,11 +255,43 @@ export default function Report() {
     return `${formattedMonth} ${year}`;
   }
 
+  // Function to generate PDF
+  const handleDownloadPDF = () => {
+    // Get the table element
+    const element = document.getElementById("report-to-download");
+
+    const opt = {
+      margin: 1,
+      filename: `report-${formatMonthYear(
+        selectedMonthBase,
+        selectedYearBase
+      )}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "letter", orientation: "landscape" },
+    };
+
+    // Generate PDF
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
     <div className="p-6">
       {/* Error and Success Alerts */}
-      {error && <Alert variant="destructive">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      {error && (
+        <DismissibleAlert
+          variant="destructive"
+          message={error}
+          onDismiss={() => setError(null)}
+        />
+      )}
+      {success && (
+        <DismissibleAlert
+          variant="success"
+          message={success}
+          onDismiss={() => setSuccess(null)}
+        />
+      )}
 
       {/* Header Section */}
       <div className="flex justify-between items-center mb-10">
@@ -260,16 +304,16 @@ export default function Report() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-wrap gap-4">
               <div className="flex flex-col gap-1">
-                <label htmlFor="month" className="font-medium text-xs">
+                {/* <label htmlFor="month" className="font-medium text-xs">
                   Month
-                </label>
+                </label> */}
                 <select
                   id="month"
                   value={selectedMonthBase}
                   onChange={(e) =>
                     setSelectedMonthBase(parseInt(e.target.value))
                   }
-                  className="p-2 border rounded-md min-w-[150px] text-xs"
+                  className="p-2 border rounded-md min-w-[150px] text-sm"
                 >
                   {months.map((month) => (
                     <option key={month.value} value={month.value}>
@@ -280,16 +324,16 @@ export default function Report() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="year" className="font-medium text-xs">
+                {/* <label htmlFor="year" className="font-medium text-xs">
                   Year
-                </label>
+                </label> */}
                 <select
                   id="year"
                   value={selectedYearBase}
                   onChange={(e) =>
                     setSelectedYearBase(parseInt(e.target.value))
                   }
-                  className="p-2 border rounded-md min-w-[150px] text-xs"
+                  className="p-2 border rounded-md min-w-[150px] text-sm"
                 >
                   {years.map((year) => (
                     <option key={year.value} value={year.value}>
@@ -312,7 +356,14 @@ export default function Report() {
           </form>
         </div>
 
-        <div>
+        <div className="flex gap-4">
+          <button
+            onClick={handleDownloadPDF}
+            className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+          >
+            Download PDF
+            <Download className="w-4 h-4" />
+          </button>
           <button
             onClick={() => setIsAddReportModalOpen(true)}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
@@ -323,76 +374,80 @@ export default function Report() {
         </div>
       </div>
 
-      {/* Report Header */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm mb-5 font-medium">
-          <p>
-            Monthly Report :{" "}
-            {formatMonthYear(selectedMonthBase, selectedYearBase)}
-          </p>
-          <p>{formatDate(currentDate)}</p>
+      <div id="report-to-download">
+        {/* Report Header */}
+        <div className="mb-6">
+          <div className="flex justify-between text-sm mb-5 font-medium">
+            <p>
+              Monthly Report :{" "}
+              {formatMonthYear(selectedMonthBase, selectedYearBase)}
+            </p>
+            <p>{formatDate(currentDate)}</p>
+          </div>
         </div>
-      </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                ID Product
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Product Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Piece
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Price
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Total Price
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {reportData?.map((item, index) => (
-              <tr
-                key={`${item?.product_id}-${item?.month}-${item?.year}-${index}`}
-                className="text-sm"
-              >
-                <td className="px-6 py-6">ISR-{item?.product_id}</td>
-                <td className="px-6 py-6">{item?.product_name}</td>
-                <td className="px-6 py-6">{item?.category}</td>
-                <td className="px-6 py-6">{item?.piece}</td>
-                <td className="px-6 py-6">
-                  Rp {parseInt(item?.price || 0, 10).toLocaleString("id-ID")}
+        {/* Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  ID Product
+                </th>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  Product Name
+                </th>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  Category
+                </th>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  Piece
+                </th>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  Price
+                </th>
+                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                  Total Price
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {reportData?.map((item, index) => (
+                <tr
+                  key={`${item?.product_id}-${item?.month}-${item?.year}-${index}`}
+                  className="text-sm"
+                >
+                  <td className="px-6 py-6">ISR-{item?.product_id}</td>
+                  <td className="px-6 py-6">{item?.product_name}</td>
+                  <td className="px-6 py-6">{item?.category}</td>
+                  <td className="px-6 py-6">{item?.piece}</td>
+                  <td className="px-6 py-6">
+                    Rp {parseInt(item?.price || 0, 10).toLocaleString("id-ID")}
+                  </td>
+                  <td className="px-6 py-6">
+                    Rp{" "}
+                    {parseInt(item?.total_price || 0, 10).toLocaleString(
+                      "id-ID"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="bg-gray-100 ">
+                <td
+                  colSpan="5"
+                  className="px-5 py-4 text-sm font-semibold text-start"
+                >
+                  Total Penjualan :
                 </td>
-                <td className="px-6 py-6">
-                  Rp{" "}
-                  {parseInt(item?.total_price || 0, 10).toLocaleString("id-ID")}
+                <td className="px-5 py-4 text-sm font-semibold">
+                  Rp {totalAmount?.toLocaleString()}
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr className="bg-gray-100 ">
-              <td
-                colSpan="5"
-                className="px-5 py-4 text-sm font-semibold text-start"
-              >
-                Total Penjualan :
-              </td>
-              <td className="px-5 py-4 text-sm font-semibold">
-                Rp {totalAmount?.toLocaleString()}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </div>
       </div>
 
       {/* Add Report Modal */}
@@ -509,6 +564,9 @@ export default function Report() {
           </div>
         </div>
       )}
+      <div className="text-sm">
+        <Toaster />
+      </div>
     </div>
   );
 }
