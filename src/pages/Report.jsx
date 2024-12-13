@@ -8,20 +8,20 @@ import { toast, Toaster } from "react-hot-toast";
 import { DismissibleAlert } from "../component/DismissibleAlert";
 
 // Custom Alert Component
-const Alert = ({ children, variant = "default", className = "" }) => {
-  const baseStyles = "p-4 rounded-lg mb-4";
-  const variants = {
-    default: "bg-blue-50 text-blue-700",
-    destructive: "bg-red-50 text-red-700",
-    success: "bg-green-50 text-green-700",
-  };
+// const Alert = ({ children, variant = "default", className = "" }) => {
+//   const baseStyles = "p-4 rounded-lg mb-4";
+//   const variants = {
+//     default: "bg-blue-50 text-blue-700",
+//     destructive: "bg-red-50 text-red-700",
+//     success: "bg-green-50 text-green-700",
+//   };
 
-  return (
-    <div className={`${baseStyles} ${variants[variant]} ${className}`}>
-      {children}
-    </div>
-  );
-};
+//   return (
+//     <div className={`${baseStyles} ${variants[variant]} ${className}`}>
+//       {children}
+//     </div>
+//   );
+// };
 
 export default function Report() {
   const [isAddReportModalOpen, setIsAddReportModalOpen] = useState(false);
@@ -66,8 +66,8 @@ export default function Report() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/products");
-      if (response.status === 200) {
-        setProducts(response.data);
+      if (response?.status === 200) {
+        setProducts(response?.data);
       }
     } catch (error) {
       setError("Error fetching products: " + error.message);
@@ -91,7 +91,7 @@ export default function Report() {
       if (month === selectedMonthBase && year === selectedYearBase) {
         toast.success("Report Get successfully");
 
-        setReportData(response.data);
+        setReportData(response?.data);
       }
     } catch (error) {
       toast.error("Error fetching report data");
@@ -217,8 +217,8 @@ export default function Report() {
 
   // 2020 -2029
   const years = Array.from({ length: 10 }, (_, i) => ({
-    value: 2020 + i,
-    label: (2020 + i).toString(),
+    value: 2024 + i,
+    label: (2024 + i).toString(),
   }));
 
   function formatDate(date) {
@@ -261,7 +261,7 @@ export default function Report() {
     const element = document.getElementById("report-to-download");
 
     const opt = {
-      margin: 1,
+      margin: 0.7,
       filename: `report-${formatMonthYear(
         selectedMonthBase,
         selectedYearBase
@@ -313,7 +313,7 @@ export default function Report() {
                   onChange={(e) =>
                     setSelectedMonthBase(parseInt(e.target.value))
                   }
-                  className="p-2 border rounded-md min-w-[150px] text-sm"
+                  className="p-2 border-b bg-gray-50 min-w-[150px] text-sm"
                 >
                   {months.map((month) => (
                     <option key={month.value} value={month.value}>
@@ -333,7 +333,7 @@ export default function Report() {
                   onChange={(e) =>
                     setSelectedYearBase(parseInt(e.target.value))
                   }
-                  className="p-2 border rounded-md min-w-[150px] text-sm"
+                  className="p-2 border-b bg-gray-50  min-w-[150px] text-sm"
                 >
                   {years.map((year) => (
                     <option key={year.value} value={year.value}>
@@ -347,7 +347,7 @@ export default function Report() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 min-w-[100px] text-sm"
+                  className="px-4 py-2 text-white bg-[#475BE8] rounded-md hover:bg-blue-700 disabled:bg-blue-300 min-w-[100px] text-sm"
                 >
                   {isLoading ? "Loading..." : "Submit"}
                 </button>
@@ -366,9 +366,9 @@ export default function Report() {
           </button>
           <button
             onClick={() => setIsAddReportModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+            className="flex items-center gap-2 px-6 py-3 bg-[#475BE8] text-white rounded-lg hover:bg-blue-700 text-sm"
           >
-            Add Report
+            Add Sold Item
             <CirclePlus className="w-4 h-4" />
           </button>
         </div>
@@ -376,10 +376,10 @@ export default function Report() {
 
       <div id="report-to-download">
         {/* Report Header */}
-        <div className="mb-6">
+        <div className="mb-2 mt-10 mx-5">
           <div className="flex justify-between text-sm mb-5 font-medium">
             <p>
-              Monthly Report :{" "}
+              Monthly Report -{" "}
               {formatMonthYear(selectedMonthBase, selectedYearBase)}
             </p>
             <p>{formatDate(currentDate)}</p>
@@ -389,24 +389,24 @@ export default function Report() {
         {/* Table */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-100">
+            <thead className="bg-[#475BE8]">
               <tr>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   ID Product
                 </th>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   Product Name
                 </th>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   Category
                 </th>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   Piece
                 </th>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   Price
                 </th>
-                <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase">
                   Total Price
                 </th>
               </tr>
@@ -460,7 +460,7 @@ export default function Report() {
             />
 
             <div className="relative bg-white rounded-lg max-w-5xl w-full pt-14 px-12 pb-10">
-              <h2 className="text-2xl font-semibold mb-10">Add New Report</h2>
+              <h2 className="text-2xl font-semibold mb-10">Add Sold Item</h2>
 
               <form onSubmit={handleAddReportSubmit} className="">
                 <div className="flex flex-col gap-5">

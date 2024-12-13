@@ -1,95 +1,4 @@
-// import React, { useEffect, useState } from "react";
-// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-// // Import pages
-// import Dashboard from "./pages/Dashboard";
-// import Product from "./pages/Product";
-// import Report from "./pages/Report";
-// import Profile from "./pages/Profile";
-// import Login from "./pages/Login";
-
-// // Import MainLayout
-// import MainLayout from "./component/MainLayout";
-
-// function App() {
-//   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-//   // Mengecek status login saat halaman dimuat
-//   useEffect(() => {
-//     const token = localStorage.getItem("token"); // Periksa token dari localStorage
-//     if (token) {
-//       setIsAuthenticated(true); // Jika token ada, set status sebagai authenticated
-//     } else {
-//       setIsAuthenticated(false); // Jika tidak ada token, set status sebagai not authenticated
-//     }
-//   }, []);
-
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         {/* Halaman login */}
-//         <Route
-//           path="/"
-//           element={<Login setIsAuthenticated={setIsAuthenticated} />}
-//         />
-
-//         {/* Halaman yang dilindungi, hanya bisa diakses jika sudah login */}
-//         <Route
-//           path="/dashboard"
-//           element={
-//             isAuthenticated ? (
-//               <MainLayout>
-//                 <Dashboard />
-//               </MainLayout>
-//             ) : (
-//               <Navigate to="/" replace /> // Arahkan ke halaman login jika belum login
-//             )
-//           }
-//         />
-//         <Route
-//           path="/product"
-//           element={
-//             isAuthenticated ? (
-//               <MainLayout>
-//                 <Product />
-//               </MainLayout>
-//             ) : (
-//               <Navigate to="/" replace />
-//             )
-//           }
-//         />
-//         <Route
-//           path="/report"
-//           element={
-//             isAuthenticated ? (
-//               <MainLayout>
-//                 <Report />
-//               </MainLayout>
-//             ) : (
-//               <Navigate to="/" replace />
-//             )
-//           }
-//         />
-//         <Route
-//           path="/profile"
-//           element={
-//             isAuthenticated ? (
-//               <MainLayout>
-//                 <Profile />
-//               </MainLayout>
-//             ) : (
-//               <Navigate to="/" replace />
-//             )
-//           }
-//         />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Product from "./pages/Product";
@@ -99,6 +8,29 @@ import Login from "./pages/Login";
 import MainLayout from "./component/MainLayout";
 
 function App() {
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  const checkDevice = () => {
+    // Cek apakah layar lebih kecil dari 1024px
+    setIsDesktop(window.innerWidth > 1024);
+  };
+
+  useEffect(() => {
+    checkDevice(); // Cek saat halaman dimuat
+    window.addEventListener("resize", checkDevice); // Cek saat layar diubah
+    return () => window.removeEventListener("resize", checkDevice);
+  }, []);
+
+  if (!isDesktop) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px", color: "blue" }}>
+        <h1 className="mt-64">
+          Maaf, Untuk saat ini website ini hanya dapat diakses pada perangkat
+          desktop.
+        </h1>
+      </div>
+    );
+  }
   return (
     <BrowserRouter>
       <Routes>

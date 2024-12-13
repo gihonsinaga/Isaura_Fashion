@@ -37,19 +37,22 @@ export default function Login() {
     }
   };
   return (
-    <div className="flex justify-center">
-      <div className="p-8 bg-white rounded-lg shadow-md w-[400px] mt-40">
-        <div className="flex gap-x-2 justify-center">
+    <div className="flex justify-center bg-[#475BE8] min-h-screen">
+      <div className="flex flex-col px-14 pt-8 bg-white rounded-lg shadow-md w-[400px] h-[400px] mt-40 text-sm">
+        <div className="flex gap-x-1 justify-center">
           <div>
-            <img src="../assets/Logo.png" className="w-9 h-8" alt="" />
+            <img src="../assets/Logo.png" className="w-8 h-7" alt="" />
           </div>
           <div>
-            <h2 className="text-2xl font-semibold mb-4 ">Login</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-[#475BE8] ">
+              Login
+            </h2>
           </div>
         </div>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
+
         <form onSubmit={handleLogin}>
-          <div className="mb-4">
+          <div className="mb-4 mt-10">
+            {error && <div className="text-red-500 mb-2">{error}</div>}
             <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
@@ -57,7 +60,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
               required
             />
           </div>
@@ -69,13 +72,13 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className=" py-3 bg-[#475BE8] text-white rounded hover:bg-blue-700 w-full mt-2 "
           >
             Login
           </button>

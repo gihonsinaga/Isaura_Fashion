@@ -189,7 +189,7 @@ export default function Product() {
         toast.success("Product updated successfully");
         setSuccess("Product has been successfully updated");
 
-        console.log("Product updated successfully");
+        // console.log("Product updated successfully");
       }
     } catch (error) {
       toast.error("Error updating product");
@@ -210,7 +210,7 @@ export default function Product() {
       setProducts((prev) => prev.filter((product) => product?.id !== id));
       toast.success("Product deleted successfully");
       setSuccess("Product has been successfully deleted");
-      console.log("Product deleted successfully");
+      // console.log("Product deleted successfully");
     } catch (error) {
       toast.error("Product Cannot Be Deleted");
       setError(
@@ -244,7 +244,7 @@ export default function Product() {
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 px-6 py-3 bg-[#475BE8] text-white rounded-lg hover:bg-blue-700"
         >
           Add Stock
           <CirclePlus className="w-4 h-4" />
@@ -296,6 +296,7 @@ export default function Product() {
                       <option value="Baju">Baju</option>
                       <option value="Celana">Celana</option>
                       <option value="Dalaman">Dalaman</option>
+                      <option value="Topi">Topi</option>
                     </select>
                   </div>
 
@@ -562,6 +563,7 @@ export default function Product() {
                       <option value="Baju">Baju</option>
                       <option value="Celana">Celana</option>
                       <option value="Dalaman">Dalaman</option>
+                      <option value="Topi">Topi</option>
                     </select>
                   </div>
 

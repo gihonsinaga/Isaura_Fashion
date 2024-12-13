@@ -70,21 +70,28 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
     setSortConfig({ key, direction });
   };
 
+  const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return `${text.slice(0, maxLength)}...`;
+    }
+    return text;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="p-4 flex justify-between items-center">
+      <div className="py-6 px-7 flex justify-between items-center">
         <div className="flex gap-4">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search Product"
-            className="p-3 border rounded-md w-64 text-sm"
+            className="py-3 px-4 border rounded w-64 text-sm border-gray-300 "
           />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="p-2 border rounded-md text-sm"
+            className="py-2 px-3  text-sm text-gray-800"
           >
             <option value="" className="">
               All Categories
@@ -96,13 +103,14 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             ))}
           </select>
         </div>
+
         <select
           value={itemsPerPage}
           onChange={(e) => {
             setItemsPerPage(Number(e.target.value));
             setCurrentPage(1);
           }}
-          className="p-2 border rounded-md text-sm"
+          className="p-2 rounded-md text-sm"
         >
           {[10, 20, 30, 40, 50].map((size) => (
             <option key={size} value={size}>
@@ -113,45 +121,45 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
       </div>
 
       <table className="w-full">
-        <thead className="bg-gray-100">
+        <thead className="bg-[#475BE8]">
           <tr>
             <th
               onClick={() => requestSort("id")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               ID Product <span className="ml-2">⇅</span>
             </th>
             <th
               onClick={() => requestSort("product_name")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               Product Name <span className="ml-2">⇅</span>
             </th>
             <th
               onClick={() => requestSort("category")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               Category <span className="ml-2">⇅</span>
             </th>
             <th
               onClick={() => requestSort("price")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               Price <span className="ml-2">⇅</span>
             </th>
             <th
               onClick={() => requestSort("piece")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               Piece <span className="ml-2">⇅</span>
             </th>
             <th
               onClick={() => requestSort("size")}
-              className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
             >
               Size <span className="ml-2">⇅</span>
             </th>
-            <th className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-6 text-left text-xs font-medium text-white uppercase tracking-wider">
               Action
             </th>
           </tr>
@@ -163,7 +171,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
                 ISR - {product.id}
               </td>
               <td className="px-6 py-6 whitespace-nowrap">
-                {product.product_name}
+                {truncateText(product.product_name, 30)}
               </td>
               <td className="px-6 py-6 whitespace-nowrap">
                 {product.category}

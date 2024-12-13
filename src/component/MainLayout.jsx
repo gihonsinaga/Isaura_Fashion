@@ -65,7 +65,7 @@ const MainLayout = ({ children }) => {
               <img src="/assets/Logo.png" alt="" />
             </div>
           </div>
-          <span className="text-xl font-medium">Isaura</span>
+          <span className="text-xl font-semibold tracking-wide ">Isaura</span>
         </div>
 
         {/* Navigation */}
@@ -104,11 +104,12 @@ const MainLayout = ({ children }) => {
       {/* Main Content */}
       <main className="ml-64 p-8">
         {/* Header */}
-        <div className="flex justify-end items-center mb-8">
+        <div className="flex  justify-end items-center mb-6">
           <div className="flex items-center gap-3">
-            <span className="text-base mt-1 font-medium  ">
+            <span className="text-base font-medium tracking-wide italic">
               {profileData?.username}
             </span>
+
             {/* <img
               src="/api/placeholder/32/32"
               alt=""
@@ -119,6 +120,7 @@ const MainLayout = ({ children }) => {
             </div> */}
           </div>
         </div>
+        <div className=" border-b w-full"></div>
 
         {/* Page Content */}
         {children}
