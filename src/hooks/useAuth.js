@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ export const useAuth = () => {
 
       try {
         // Verify token with your backend
-        const response = await axios.get("http://localhost:5000/api/profiles", {
+        const response = await api.get("/profiles", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

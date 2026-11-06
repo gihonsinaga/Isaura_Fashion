@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { CirclePlus, Pencil, Trash2, Search, ImageUp } from "lucide-react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
-import ProductTable from "../component/productTable.jsx";
+import ProductTable from "../component/ProductTable.jsx";
 import { toast, Toaster } from "react-hot-toast";
 import { DismissibleAlert } from "../component/DismissibleAlert";
 
@@ -41,7 +41,7 @@ export default function Product() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products");
+        const response = await api.get("/products");
         if (response.status === 200) {
           setProducts(response.data);
         } else {
@@ -108,8 +108,8 @@ export default function Product() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/products",
+      const response = await api.post(
+        "/products",
         productData
       );
 
@@ -172,8 +172,8 @@ export default function Product() {
     e.preventDefault();
 
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/products/${selectedProductId}`,
+      const response = await api.put(
+        `/products/${selectedProductId}`,
         editFormData
       );
 
@@ -206,7 +206,7 @@ export default function Product() {
       );
       if (!confirmDelete) return;
 
-      await axios.delete(`http://localhost:5000/api/products/${id}`);
+      await api.delete(`/products/${id}`);
       setProducts((prev) => prev.filter((product) => product?.id !== id));
       toast.success("Product deleted successfully");
       setSuccess("Product has been successfully deleted");

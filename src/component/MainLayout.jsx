@@ -8,7 +8,7 @@ import {
   LogOut,
   UserRound,
 } from "lucide-react";
-import axios from "axios";
+import api from "../api";
 
 const navigation = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -31,7 +31,7 @@ const MainLayout = ({ children }) => {
         navigate("/");
       }
 
-      const response = await axios.get("http://localhost:5000/api/profiles", {
+      const response = await api.get("/profiles", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

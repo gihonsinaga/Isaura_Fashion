@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build: .
+    container_name: isaura-frontend
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:8080:80"
+    networks:
+      - isaura-network
+
+networks:
+  isaura-network:
+    external: true

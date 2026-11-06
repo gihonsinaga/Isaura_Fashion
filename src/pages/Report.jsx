@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import Select from "react-select";
 import { CirclePlus, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +65,7 @@ export default function Report() {
   // Fetch products function
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
+      const response = await api.get("/products");
       if (response?.status === 200) {
         setProducts(response?.data);
       }
@@ -83,8 +83,8 @@ export default function Report() {
       // Reset report data before fetching new data
       setReportData([]);
 
-      const response = await axios.get(
-        `http://localhost:5000/api/reports?month=${month}&year=${year}`
+      const response = await api.get(
+        `/reports?month=${month}&year=${year}`
       );
 
       // Only update state if the response matches current selected month/year
@@ -109,7 +109,7 @@ export default function Report() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/reports", {
+      const response = await api.post("/reports", {
         product_id: formData.product_id,
         piece: parseInt(formData.piece),
         month: parseInt(formData.month),

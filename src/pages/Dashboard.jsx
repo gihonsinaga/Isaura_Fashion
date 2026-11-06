@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { TrendingUp, ChartPie, Box } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import axios from "axios";
+import api from "../api";
 
 export default function Dashboard() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -23,8 +23,8 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const [productsRes, reportsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/products"),
-          axios.get("http://localhost:5000/api/reports/all"),
+          api.get("/products"),
+          api.get("/reports/all"),
         ]);
 
         setProducts(productsRes.data);

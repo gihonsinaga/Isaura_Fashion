@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DismissibleAlert } from "../component/DismissibleAlert";
@@ -25,7 +25,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await axios.get("http://localhost:5000/api/profiles", {
+      const response = await api.get("/profiles", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,8 +59,8 @@ export default function Profile() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(
-        "http://localhost:5000/api/profiles",
+      const response = await api.put(
+        "/profiles",
         editData,
         {
           headers: {
