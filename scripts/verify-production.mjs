@@ -26,4 +26,9 @@ assert.ok(
 const productPage = await readFile("src/pages/Product.jsx", "utf8");
 assert.match(productPage, /from "\.\.\/component\/ProductTable\.jsx"/);
 
+const indexHtml = await readFile("index.html", "utf8");
+const layout = await readFile("src/component/MainLayout.jsx", "utf8");
+assert.match(indexHtml, /<title>StockFlow Dashboard<\/title>/);
+assert.match(layout, />StockFlow</);
+
 console.log("production frontend configuration checks passed");

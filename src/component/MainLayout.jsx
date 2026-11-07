@@ -62,10 +62,10 @@ const MainLayout = ({ children }) => {
         <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-200">
           <div className="p-1 rounded ">
             <div className="w-6 h-6 ">
-              <img src="/assets/Logo.png" alt="" />
+              <img src="/assets/Logo.png" alt="StockFlow logo" />
             </div>
           </div>
-          <span className="text-xl font-semibold tracking-wide ">Isaura</span>
+          <span className="text-xl font-semibold tracking-wide ">StockFlow</span>
         </div>
 
         {/* Navigation */}
